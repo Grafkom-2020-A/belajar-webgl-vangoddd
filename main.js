@@ -67,13 +67,36 @@ function main() {
     var uDy = gl.getUniformLocation(shaderProgram, 'dy');
     var uDz = gl.getUniformLocation(shaderProgram, 'dz');
 
-    gl.uniform1f(uDz, dz);
+    gl.enable(gl.DEPTH_TEST);
+
+    //listener
+    var freeze = false;
+
+    function onClick(event){
+        freeze = !freeze;
+    }
+
+    function onKeyDown(event){
+        if(event.keyCode == 32) freeze = true;
+    }
+
+    function onKeyUp(event){
+        if(event.keyCode == 32) freeze = false;
+    }
+
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);
+    document.addEventListener('click', onClick);
 
     function render(){
-        dx += 0.001;
-        dy += 0.001;
+        if(!freeze){
+            dx += 0.001;
+            dy += 0.001;
+            //dz += 0.01;
+        }
         gl.uniform1f(uDx, dx);
         gl.uniform1f(uDy, dy);
+        gl.uniform1f(uDz, dz);
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(primitive, offset, count);
